@@ -11,6 +11,19 @@ param(
 
 $ErrorActionPreference = "Stop"
 
+# ── Check for Administrator privileges ─────────────────────
+$isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+if (-not $isAdmin) {
+    Write-Host "[!] This script is not running as Administrator." -ForegroundColor Yellow
+    Write-Host "[!] Some steps (installing Nmap, creating C:\Tools) require admin privileges." -ForegroundColor Yellow
+    Write-Host "[!] Please right-click PowerShell and select 'Run as Administrator'." -ForegroundColor Yellow
+    Write-Host ""
+    $answer = Read-Host "Continue anyway? (y/n)"
+    if ($answer -notmatch "^[Yy]") {
+        exit 1
+    }
+}
+
 $script:SOCKS_PORT = ""
 $script:CONN_SKU = ""
 
@@ -81,9 +94,29 @@ function Install-RHTLC {
             $env:Path += ";$ncatDir"
             Write-Info "Ncat found at $($found.FullName) — added to PATH"
         } else {
-            Write-Err "Ncat not found. RHTLC requires Ncat as the SOCKS5 helper."
-            Write-Err "Please install Nmap from https://nmap.org/download.html and re-run this script."
-            exit 1
+            Write-Warn "Ncat not found. RHTLC requires Ncat as the SOCKS5 helper."
+            $answer = Read-Host "Nmap (which includes Ncat) is not installed. Do you want to install it? (y/n)"
+            if ($answer -match "^[Yy]") {
+                Write-Info "Downloading Nmap installer..."
+                $nmpInstaller = Join-Path $env:TEMP "nmap-setup.exe"
+                Invoke-WebRequest -Uri "https://nmap.org/dist/nmap-7.95-setup.exe" -OutFile $nmpInstaller
+                Write-Info "Installing Nmap silently (this may take a minute)..."
+                Start-Process $nmpInstaller -ArgumentList "/S" -Wait
+                Remove-Item $nmpInstaller -Force -ErrorAction SilentlyContinue
+                if ($env:Path -notlike "*Nmap*") {
+                    $env:Path += ";C:\Program Files (x86)\Nmap"
+                }
+                $ncat = Get-Command ncat.exe -ErrorAction SilentlyContinue
+                if ($ncat) {
+                    Write-Info "Nmap installed successfully! Ncat found at $($ncat.Source)"
+                } else {
+                    Write-Err "Nmap installation failed. Please install manually from https://nmap.org/download.html"
+                    exit 1
+                }
+            } else {
+                Write-Err "Ncat is required for RHTLC. Exiting."
+                exit 1
+            }
         }
     }
 
