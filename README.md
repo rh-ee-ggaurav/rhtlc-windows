@@ -13,7 +13,7 @@ Official RHTLC docs: https://redhattraining.github.io/RHTLC_Docs/
 
 1. Open **PowerShell** and download the script:
    ```powershell
-   Invoke-WebRequest -Uri "https://raw.githubusercontent.com/rh-ee-ggaurav/rhtlc-setup/main/win/rhtlc-setup.ps1" -OutFile "rhtlc-setup.ps1"
+   Invoke-WebRequest -Uri "https://raw.githubusercontent.com/rh-ee-ggaurav/rhtlc-windows/main/rhtlc-setup.ps1" -OutFile "rhtlc-setup.ps1"
    ```
 
 2. Run the setup:
