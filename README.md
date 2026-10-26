@@ -25,7 +25,7 @@ Official RHTLC docs: https://redhattraining.github.io/RHTLC_Docs/
    > Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
    > ```
 
-3. When prompted, go to the [Red Hat Online Learning Portal](https://rol.redhat.com), In the left side menu click on **My Training" then find your class and click on View then open the **Labs** tab, click **Create Lab**, then **COPY RHTLC URL** and paste it into the terminal.
+3. When prompted, go to the [Red Hat Online Learning Portal](https://rol.redhat.com), In the left side menu click on **My Training** then find your class and click on View then open the **Labs** tab, click **Create Lab**, then **COPY RHTLC URL** and paste it into the terminal.
 
 4. A Chrome window will open with proxy configured. Navigate to the URL from `oc whoami --show-console` (run inside the workstation).
    - If you see a security warning, click **Advanced** then **Proceed**
