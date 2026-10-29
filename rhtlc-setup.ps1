@@ -1,9 +1,9 @@
-# ─────────────────────────────────────────────────────────────
+# -------------------------------------------------------------
 #  RHTLC One-Click Setup Script (Windows)
-#  Automates: install → self-check → connect → chrome → ssh
+#  Automates: install -> self-check -> connect -> chrome -> ssh
 #  Run in PowerShell as: .\rhtlc-setup.ps1 [full|daily|install|connect|cleanup|browser|ssh]
 #  Official RHTLC docs: https://redhattraining.github.io/RHTLC_Docs/
-# ─────────────────────────────────────────────────────────────
+# -------------------------------------------------------------
 
 param(
     [string]$Mode = "full"
@@ -11,7 +11,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-# ── Check for Administrator privileges ─────────────────────
+# -- Check for Administrator privileges ---------------------
 $isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 if (-not $isAdmin) {
     Write-Host "[!] This script is not running as Administrator." -ForegroundColor Yellow
@@ -27,7 +27,7 @@ if (-not $isAdmin) {
 $script:SOCKS_PORT = ""
 $script:CONN_SKU = ""
 
-# ── Output helpers ──────────────────────────────────────────
+# -- Output helpers ------------------------------------------
 function Write-Info    { param([string]$Msg) Write-Host "[+] $Msg" -ForegroundColor Green }
 function Write-Warn    { param([string]$Msg) Write-Host "[!] $Msg" -ForegroundColor Yellow }
 function Write-Err     { param([string]$Msg) Write-Host "[X] $Msg" -ForegroundColor Red }
@@ -42,7 +42,7 @@ function Show-Banner {
     Write-Host ""
 }
 
-# ── Step 1: Create C:\Tools and Download RHTLC ─────────────
+# -- Step 1: Create C:\Tools and Download RHTLC -------------
 function Install-RHTLC {
     Write-Step 1 "Installing RHTLC"
 
@@ -92,7 +92,7 @@ function Install-RHTLC {
         if ($found) {
             $ncatDir = $found.DirectoryName
             $env:Path += ";$ncatDir"
-            Write-Info "Ncat found at $($found.FullName) — added to PATH"
+            Write-Info "Ncat found at $($found.FullName) -- added to PATH"
         } else {
             Write-Warn "Ncat not found. RHTLC requires Ncat as the SOCKS5 helper."
             $answer = Read-Host "Nmap (which includes Ncat) is not installed. Do you want to install it? (y/n)"
@@ -128,7 +128,7 @@ function Install-RHTLC {
     Write-Info "Expected: [SUCCESS] Self-check passed"
 }
 
-# ── Step 4: Check & manage existing connections ─────────────
+# -- Step 4: Check & manage existing connections -------------
 function Manage-Connections {
     Write-Step 4 "Checking Existing Connections"
 
@@ -169,7 +169,7 @@ function Manage-Connections {
     }
 }
 
-# ── Step 5: Connect to classroom environment ────────────────
+# -- Step 5: Connect to classroom environment ----------------
 function Connect-Classroom {
     Manage-Connections
 
@@ -222,7 +222,7 @@ function Connect-Classroom {
     Write-Host "  Connection:  $($script:CONN_SKU)" -ForegroundColor Cyan
 }
 
-# ── Step 6: Launch Chrome with SOCKS proxy ──────────────────
+# -- Step 6: Launch Chrome with SOCKS proxy ------------------
 function Launch-Browser {
     Write-Step 6 "Launching Chrome with SOCKS Proxy"
 
@@ -275,7 +275,7 @@ function Launch-Browser {
     Write-Host "  The browser is using SOCKS5 proxy on 127.0.0.1:${port}" -ForegroundColor Cyan
 }
 
-# ── Step 7: SSH into workstation ────────────────────────────
+# -- Step 7: SSH into workstation ----------------------------
 function Connect-SSH {
     Write-Step 7 "SSH into Workstation"
 
@@ -307,7 +307,7 @@ function Connect-SSH {
     & rhtlc ssh $sshTarget
 }
 
-# ── Troubleshoot: test proxy connectivity ───────────────────
+# -- Troubleshoot: test proxy connectivity -------------------
 function Test-Proxy {
     Write-Step 0 "Troubleshooting Proxy Connectivity"
 
@@ -332,7 +332,7 @@ function Test-Proxy {
     Write-Warn "Do NOT create another RHTLC connection."
 }
 
-# ── Disconnect all connections ──────────────────────────────
+# -- Disconnect all connections ------------------------------
 function Disconnect-All {
     Write-Step 0 "Disconnecting All Connections"
 
@@ -358,7 +358,7 @@ function Disconnect-All {
     Write-Info "All connections disconnected"
 }
 
-# ── Main ────────────────────────────────────────────────────
+# -- Main ----------------------------------------------------
 Show-Banner
 
 switch ($Mode) {
